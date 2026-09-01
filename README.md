@@ -4,6 +4,7 @@ A full-stack **Smart Retail Platform** featuring an Express.js REST API backend,
 
 ---
 
+
 ## 🌟 Key Features
 
 - 🎨 **Clean White-Background Interface**: Minimalist white canvas UI with crisp slate typography, subtle borders, high contrast readability, and smooth micro-animations.
