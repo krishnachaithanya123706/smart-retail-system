@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    // Automated Triggers: GitHub Webhook Push + SCM Polling every 5 minutes
+    triggers {
+        githubPush()
+        pollSCM('H/5 * * * *')
+    }
+
     environment {
         APP_NAME = 'smart-retail-system'
         DOCKER_IMAGE = 'smart-retail-system'
@@ -10,36 +16,36 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo 'Checking out source code from repository...'
+                echo '⚡ Automated Trigger Detected: Checking out latest code from GitHub...'
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing Node.js dependencies...'
+                echo '📦 Installing Node.js production dependencies...'
                 sh 'npm install'
             }
         }
 
         stage('Code Analysis & Syntax Check') {
             steps {
-                echo 'Validating backend server file...'
+                echo '🔍 Validating JavaScript syntax...'
                 sh 'node -c server.js'
                 sh 'node -c data.js'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Tag Docker Image') {
             steps {
-                echo 'Building Docker container image...'
+                echo '🐳 Building updated Docker container image...'
                 sh 'docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} -t ${DOCKER_IMAGE}:latest .'
             }
         }
 
-        stage('Deploy Container') {
+        stage('Automated Deployment') {
             steps {
-                echo 'Deploying application container via Docker Compose...'
+                echo '🚀 Redeploying updated application container via Docker Compose...'
                 sh 'docker compose down || true'
                 sh 'docker compose up -d --build'
             }
@@ -47,7 +53,7 @@ pipeline {
 
         stage('Health Check') {
             steps {
-                echo 'Verifying application health...'
+                echo '🩺 Running endpoint health check verification...'
                 sleep time: 5, unit: 'SECONDS'
                 sh 'curl -f http://localhost:5000/api/products || exit 1'
             }
@@ -56,18 +62,18 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up dangling Docker images...'
+            echo '🧹 Pruning old unused Docker layers...'
             sh 'docker image prune -f || true'
         }
         success {
-            echo '==================================================='
-            echo "SUCCESS: Smart Retail System deployed on port ${PORT}"
-            echo '==================================================='
+            echo '========================================================================'
+            echo "✅ AUTOMATION SUCCESS: Updated Smart Retail System deployed at :${PORT}"
+            echo '========================================================================'
         }
         failure {
-            echo '==================================================='
-            echo 'FAILURE: Jenkins Pipeline Build Failed!'
-            echo '==================================================='
+            echo '========================================================================'
+            echo '❌ AUTOMATION FAILURE: Pipeline build failed. Rolling back or inspect logs.'
+            echo '========================================================================'
         }
     }
 }
