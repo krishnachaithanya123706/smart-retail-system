@@ -1,0 +1,17 @@
+{
+  "name": "smart-retail-system",
+  "version": "1.0.0",
+  "description": "Smart Retail System with AI POS, Inventory, Vision Analytics and White-Background UI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "keywords": ["smart-retail", "pos", "inventory", "ai-vision", "docker"],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Retail System - AI Automated Store Platform</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheet (White Theme) -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div class="brand-text">
+          <h2>OmniRetail AI</h2>
+          <span>Smart Retail System</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="pos">
+          <i class="fa-solid fa-cash-register"></i>
+          <span>Smart POS</span>
+          <span class="badge badge-accent">AI</span>
+        </button>
+        <button class="nav-item" data-tab="inventory">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span>Inventory</span>
+          <span class="badge badge-warning" id="nav-low-stock-count">0</span>
+        </button>
+        <button class="nav-item" data-tab="vision">
+          <i class="fa-solid fa-eye"></i>
+          <span>AI Vision & Camera</span>
+        </button>
+        <button class="nav-item" data-tab="orders">
+          <i class="fa-solid fa-receipt"></i>
+          <span>Transactions</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-dot online"></span>
+          <div class="status-info">
+            <strong>System Online</strong>
+            <small>Express API :5000</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="page-title">Executive Dashboard</h1>
+          <p class="subtitle" id="page-subtitle">Real-time store metrics, inventory tracking & AI vision surveillance</p>
+        </div>
+        <div class="topbar-right">
+          <div class="store-selector">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Flagship Store #01</span>
+          </div>
+          <button class="btn btn-secondary" id="btn-quick-scan-pos">
+            <i class="fa-solid fa-qrcode"></i> Quick AI Scanner
+          </button>
+          <div class="user-avatar">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Toast Container -->
+      <div id="toast-container"></div>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <!-- KPI Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon icon-emerald">
+              <i class="fa-solid fa-dollar-sign"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Total Revenue Today</span>
+              <h3 class="metric-value" id="kpi-revenue">$0.00</h3>
+              <span class="metric-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% vs yesterday</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-indigo">
+              <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Orders Processed</span>
+              <h3 class="metric-value" id="kpi-orders">0</h3>
+              <span class="metric-sub">Avg $42.50 / order</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-amber">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Low Stock Alerts</span>
+              <h3 class="metric-value" id="kpi-low-stock">0</h3>
+              <span class="metric-trend trend-alert" id="kpi-low-stock-sub">Needs reorder</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-purple">
+              <i class="fa-solid fa-video"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Active AI Cameras</span>
+              <h3 class="metric-value" id="kpi-cameras">3 / 3</h3>
+              <span class="metric-sub">100% Shelf Coverage</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Charts & Feeds -->
+        <div class="dashboard-grid">
+          <!-- Sales Trend Chart Card -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <div class="header-title">
+                <i class="fa-solid fa-chart-area icon-header"></i>
+                <div>
+                  <h3>Sales Revenue Trend</h3>
+                  <p>Intraday store revenue timeline</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" id="sales-chart-wrapper">
+                <!-- SVG Chart Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Breakdown -->
+          <div class="card">
+            <div class="card-header">
+              <div class="header-title">
+                <i class="fa-solid fa-pie-chart icon-header"></i>
+                <div>
+                  <h3>Sales by Category</h3>
+                  <p>Revenue distribution</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="category-chart-container" class="category-bars">
+                <!-- Progress Bars Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Hourly Customer Footfall -->
+          <div class="card">
+            <div class="card-header">
+              <div class="header-title">
+                <i class="fa-solid fa-users icon-header"></i>
+                <div>
+                  <h3>Hourly Customer Traffic</h3>
+                  <p>AI entrance sensor count</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="footfall-chart-container" class="histogram-bars">
+                <!-- Footfall Histogram Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Live AI Store Feed -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <div class="header-title">
+                <i class="fa-solid fa-bell icon-header"></i>
+                <div>
+                  <h3>Real-time AI Event Stream</h3>
+                  <p>System logs and shelf vision alerts</p>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-light" id="btn-refresh-dashboard">
+                <i class="fa-solid fa-rotate"></i> Refresh
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="log-stream" id="dashboard-log-stream">
+                <!-- Logs Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SMART POS CHECKOUT -->
+      <section id="tab-pos" class="tab-pane">
+        <div class="pos-container">
+          <!-- Left: Product Catalog Grid -->
+          <div class="pos-products-section card">
+            <div class="pos-filter-bar">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="pos-search-input" placeholder="Search product name, SKU, barcode...">
+              </div>
+              <div class="category-pills" id="pos-category-pills">
+                <button class="pill active" data-category="All">All</button>
+                <button class="pill" data-category="Electronics">Electronics</button>
+                <button class="pill" data-category="Groceries">Groceries</button>
+                <button class="pill" data-category="Produce">Produce</button>
+                <button class="pill" data-category="Apparel & Lifestyle">Lifestyle</button>
+              </div>
+            </div>
+
+            <!-- AI Scan Tray Action Banner -->
+            <div class="ai-scan-banner">
+              <div class="scan-banner-info">
+                <i class="fa-solid fa-robot scan-icon"></i>
+                <div>
+                  <strong>AI Visual Tray Scanner</strong>
+                  <p>Simulate placing items on the smart optical checkout tray</p>
+                </div>
+              </div>
+              <button class="btn btn-primary pulse-btn" id="btn-ai-scan-tray">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Scan Tray
+              </button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="pos-products-grid">
+              <!-- Products injected via JS -->
+            </div>
+          </div>
+
+          <!-- Right: Cart & Checkout Section -->
+          <div class="pos-cart-section card">
+            <div class="cart-header">
+              <h3><i class="fa-solid fa-cart-shopping"></i> Current Cart</h3>
+              <button class="btn btn-sm btn-light-danger" id="btn-clear-cart">
+                <i class="fa-solid fa-trash-can"></i> Clear
+              </button>
+            </div>
+
+            <div class="cart-items-container" id="cart-items-list">
+              <!-- Cart Items injected via JS -->
+              <div class="empty-cart-state">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <p>Cart is empty</p>
+                <small>Click products or use AI Auto Scan to start checkout</small>
+              </div>
+            </div>
+
+            <div class="cart-summary">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Sales Tax (8%)</span>
+                <span id="cart-tax">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Loyalty Discount</span>
+                <div class="discount-input-group">
+                  <span>-$</span>
+                  <input type="number" id="cart-discount-input" value="0" min="0" step="1">
+                </div>
+              </div>
+              <div class="summary-row total-row">
+                <strong>Total Amount</strong>
+                <strong id="cart-total">$0.00</strong>
+              </div>
+
+              <div class="payment-method-selector">
+                <label>Select Payment Method:</label>
+                <div class="payment-options">
+                  <label class="pay-option">
+                    <input type="radio" name="payment-method" value="Contactless Card" checked>
+                    <span><i class="fa-regular fa-credit-card"></i> Card</span>
+                  </label>
+                  <label class="pay-option">
+                    <input type="radio" name="payment-method" value="AI FacePay">
+                    <span><i class="fa-solid fa-face-smile"></i> FacePay</span>
+                  </label>
+                  <label class="pay-option">
+                    <input type="radio" name="payment-method" value="Apple Pay">
+                    <span><i class="fa-brands fa-apple"></i> Apple Pay</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-block btn-lg" id="btn-complete-checkout" disabled>
+                <i class="fa-solid fa-check"></i> Complete & Print Receipt ($0.00)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: INVENTORY MANAGEMENT -->
+      <section id="tab-inventory" class="tab-pane">
+        <div class="card">
+          <div class="card-header toolbar-header">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="inventory-search" placeholder="Filter by product name, SKU, or barcode...">
+              </div>
+              <select id="inventory-stock-filter" class="form-select">
+                <option value="all">All Stock Levels</option>
+                <option value="in">In Stock Only</option>
+                <option value="low">Low Stock Warning</option>
+                <option value="out">Out of Stock</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-open-add-product-modal">
+              <i class="fa-solid fa-plus"></i> Add New Product
+            </button>
+          </div>
+
+          <div class="card-body no-padding">
+            <div class="table-responsive">
+              <table class="custom-table" id="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>SKU & Barcode</th>
+                    <th>Price</th>
+                    <th>Stock Status</th>
+                    <th>In Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                  <!-- Table rows injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: AI VISION & CAMERA SURVEILLANCE -->
+      <section id="tab-vision" class="tab-pane">
+        <div class="vision-layout">
+          <!-- Camera Feed Display -->
+          <div class="card camera-feed-card">
+            <div class="card-header">
+              <div class="header-title">
+                <i class="fa-solid fa-video icon-header"></i>
+                <div>
+                  <h3 id="active-camera-title">Camera Feed: Shelf A1 - Electronics</h3>
+                  <p><span class="live-tag">LIVE AI VISION</span> Resolution: 1080p | 30 FPS</p>
+                </div>
+              </div>
+              <div class="camera-selector-buttons" id="camera-selector">
+                <button class="btn btn-sm btn-secondary active" data-cam="cam-1">Cam 1 (Shelf A1)</button>
+                <button class="btn btn-sm btn-secondary" data-cam="cam-2">Cam 2 (POS Kiosk)</button>
+                <button class="btn btn-sm btn-secondary" data-cam="cam-3">Cam 3 (Entrance)</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="camera-viewport" id="camera-viewport">
+                <canvas id="vision-canvas" width="800" height="450"></canvas>
+                <div class="camera-overlay-info">
+                  <div class="overlay-badge"><i class="fa-solid fa-microchip"></i> YOLOv8 Retail Object Detection Active</div>
+                  <div class="overlay-timestamp" id="camera-timestamp">00:00:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vision Log & Object Detection Table -->
+          <div class="vision-sidebar card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-crosshairs"></i> Object Detections</h3>
+            </div>
+            <div class="card-body">
+              <div class="detections-list" id="detections-list">
+                <!-- Objects listed via JS -->
+              </div>
+            </div>
+
+            <div class="card-header border-top">
+              <h3><i class="fa-solid fa-list-check"></i> Vision Telemetry Log</h3>
+            </div>
+            <div class="card-body">
+              <div class="vision-logs" id="vision-telemetry-logs">
+                <!-- Telemetry logs via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: TRANSACTION LOGS & RECEIPTS -->
+      <section id="tab-orders" class="tab-pane">
+        <div class="card">
+          <div class="card-header toolbar-header">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="orders-search" placeholder="Search order ID, customer name, payment method...">
+            </div>
+          </div>
+          <div class="card-body no-padding">
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date & Time</th>
+                    <th>Customer</th>
+                    <th>Checkout Type</th>
+                    <th>Payment Method</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- Orders injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL 1: ADD / EDIT PRODUCT -->
+  <div class="modal-backdrop" id="modal-product">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-product-title">Add New Product</h3>
+        <button class="close-btn" id="btn-close-product-modal">&times;</button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="form-product-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="form-name" required placeholder="e.g. Wireless Smart Speaker">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="form-category" class="form-select">
+                <option value="Electronics">Electronics</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Produce">Produce</option>
+                <option value="Apparel & Lifestyle">Apparel & Lifestyle</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price ($) *</label>
+              <input type="number" id="form-price" step="0.01" min="0" required placeholder="29.99">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Stock Count *</label>
+              <input type="number" id="form-stock" min="0" required placeholder="25">
+            </div>
+            <div class="form-group">
+              <label>Min Stock Threshold</label>
+              <input type="number" id="form-min-stock" min="0" value="5" placeholder="5">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>SKU (Auto-generated if empty)</label>
+              <input type="text" id="form-sku" placeholder="SKU-12345">
+            </div>
+            <div class="form-group">
+              <label>Barcode</label>
+              <input type="text" id="form-barcode" placeholder="88019234">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="url" id="form-image" placeholder="https://images.unsplash.com/...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-product">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: RECEIPT MODAL -->
+  <div class="modal-backdrop" id="modal-receipt">
+    <div class="modal-card receipt-card">
+      <div class="modal-header">
+        <h3>Digital Tax Invoice / Receipt</h3>
+        <button class="close-btn" id="btn-close-receipt-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="receipt-modal-content">
+        <!-- Receipt Content Injected via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-close-receipt">Close</button>
+        <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Receipt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/pos.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/vision.js"></script>
+</body>
+</html>
