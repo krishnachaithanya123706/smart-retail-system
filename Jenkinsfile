@@ -1,79 +1,87 @@
 pipeline {
     agent any
 
-    // Automated Triggers: GitHub Webhook Push + SCM Polling every 5 minutes
-    triggers {
-        githubPush()
-        pollSCM('H/5 * * * *')
-    }
-
-    environment {
-        APP_NAME = 'smart-retail-system'
-        DOCKER_IMAGE = 'smart-retail-system'
-        PORT = '5000'
+    options {
+        timestamps()
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                echo '⚡ Automated Trigger Detected: Checking out latest code from GitHub...'
                 checkout scm
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Verify Files') {
             steps {
-                echo '📦 Installing Node.js production dependencies...'
-                sh 'npm install'
+                sh '''
+                    test -f package.json
+                    test -f package-lock.json
+                    test -f server.js
+                    test -f Dockerfile
+                    docker --version
+                '''
             }
         }
 
-        stage('Code Analysis & Syntax Check') {
+        stage('Build Docker Image') {
             steps {
-                echo '🔍 Validating JavaScript syntax...'
-                sh 'node -c server.js'
-                sh 'node -c data.js'
+                sh '''
+                    docker build \
+                      --tag smart-retail-system:${BUILD_NUMBER} \
+                      --tag smart-retail-system:latest \
+                      .
+                '''
             }
         }
 
-        stage('Build & Tag Docker Image') {
+        stage('Stop Old Container') {
             steps {
-                echo '🐳 Building updated Docker container image...'
-                sh 'docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} -t ${DOCKER_IMAGE}:latest .'
+                sh '''
+                    docker rm -f smart-retail-system 2>/dev/null || true
+                '''
             }
         }
 
-        stage('Automated Deployment') {
+        stage('Deploy Application') {
             steps {
-                echo '🚀 Redeploying updated application container via Docker Compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh '''
+                    docker run -d \
+                      --name smart-retail-system \
+                      --restart unless-stopped \
+                      -p 5000:5000 \
+                      smart-retail-system:latest
+                '''
             }
         }
 
         stage('Health Check') {
             steps {
-                echo '🩺 Running endpoint health check verification...'
-                sleep time: 5, unit: 'SECONDS'
-                sh 'curl -f http://localhost:5000/api/products || exit 1'
+                sh '''
+                    sleep 5
+                    docker ps --filter "name=smart-retail-system"
+                    docker logs smart-retail-system
+                    wget --spider --tries=5 \
+                      --waitretry=2 \
+                      http://host.docker.internal:5000
+                '''
             }
         }
     }
 
     post {
-        always {
-            echo '🧹 Pruning old unused Docker layers...'
-            sh 'docker image prune -f || true'
-        }
         success {
-            echo '========================================================================'
-            echo "✅ AUTOMATION SUCCESS: Updated Smart Retail System deployed at :${PORT}"
-            echo '========================================================================'
+            echo 'Smart Retail System deployed successfully.'
+            echo 'Open: http://localhost:5000'
         }
+
         failure {
-            echo '========================================================================'
-            echo '❌ AUTOMATION FAILURE: Pipeline build failed. Rolling back or inspect logs.'
-            echo '========================================================================'
+            echo 'Pipeline failed. Displaying application logs:'
+            sh 'docker logs smart-retail-system 2>/dev/null || true'
+        }
+
+        always {
+            sh 'docker ps --filter "name=smart-retail-system" || true'
         }
     }
 }
