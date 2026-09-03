@@ -6,7 +6,7 @@
   /* Color Palette - Light & Crisp White Canvas */
   --bg-app: #3a6fa3;
   --bg-surface: #c42f2f;
-  --bg-sidebar: #eee6e6ff;
+  --bg-sidebar: rgb(116, 66, 66);
   --bg-card: #ffffff;
   --bg-hover: #f1f5f9;
   --bg-active: #eef2ff;
