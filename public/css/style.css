@@ -4,9 +4,9 @@
 
 :root {
   /* Color Palette - Light & Crisp White Canvas */
-  --bg-app: #dcdfe1;
+  --bg-app: #dce1df;
   --bg-surface: #e8dcdc;
-  --bg-sidebar: rgb(243, 236, 236);
+  --bg-sidebar: rgb(224, 216, 216);
   --bg-card: #ffffff;
   --bg-hover: #f1f5f9;
   --bg-active: #eef2ff;
